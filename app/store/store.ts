@@ -19,12 +19,22 @@ const persistConfig = {
   blacklist: ['user'],
 };
 
+const middlewares: any[] = [
+  /* other middlewares */
+];
+
+const createDebugger = require('redux-flipper').default;
+middlewares.push(createDebugger());
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({immutableCheck: false, serializableCheck: false}),
+    getDefaultMiddleware({
+      immutableCheck: false,
+      serializableCheck: false,
+    }).concat(middlewares),
 });
 
 export const persistor = persistStore(store);
