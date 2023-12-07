@@ -7,11 +7,10 @@ import React, {useEffect} from 'react';
 import {ColorValue} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
-// import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useDispatch} from 'react-redux';
-// import {useSelector, useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 
 // Hook for theme change (Light/Dark Mode)
 import {useTheme} from '../theme/useTheme';
@@ -20,10 +19,10 @@ import {getSecureValue} from '../utils/keyChain';
 // Redux slice for updating Access Token to store
 import {updateToken} from '../store/userSlice';
 
-// import {RootState} from '../store/store';
+import {RootState} from '../store/store';
 
 // Screens
-// import Login from '../screens/auth/Login';
+import Login from '../screens/auth/Login';
 import Tasks from '../screens/Tasks';
 import NetworkExample from '../screens/NetworkExample';
 import Settings from '../screens/Settings';
@@ -40,13 +39,13 @@ const settingsIcon = ({color}: {color: ColorValue | number}) => (
 );
 
 // Root Navigation
-// const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function RootNavigation() {
   const {theme} = useTheme();
   const dispatch = useDispatch();
-  // const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user);
 
   // Copy existing token from local storage to redux store
   useEffect(() => {
@@ -61,55 +60,55 @@ export default function RootNavigation() {
 
   return (
     <NavigationContainer>
-      {/* {user.token ? ( */}
-      <Tab.Navigator
-        screenOptions={{
-          tabBarStyle: {
-            backgroundColor: theme.cardBg,
-            borderTopColor: theme?.layoutBg,
-          },
-          tabBarInactiveTintColor: theme.color,
-          tabBarActiveTintColor: theme.primary,
-          headerStyle: {backgroundColor: theme.cardBg, height: 50},
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            color: theme.primary,
-            fontSize: 18,
-            fontWeight: 'bold',
-          },
-          tabBarShowLabel: false,
-        }}>
-        <Tab.Screen
-          name="To Do"
-          component={Tasks}
-          options={{
-            tabBarIcon: homeIcon,
-          }}
-        />
-        <Tab.Screen
-          name="NetworkExample"
-          component={NetworkExample}
-          options={{
-            tabBarIcon: networkIcon,
-          }}
-        />
-        <Tab.Screen
-          name="Settings"
-          component={Settings}
-          options={{
-            // headerShown: false,
-            tabBarIcon: settingsIcon,
-          }}
-        />
-      </Tab.Navigator>
-      {/* ) : (
+      {user.token ? (
+        <Tab.Navigator
+          screenOptions={{
+            tabBarStyle: {
+              backgroundColor: theme.cardBg,
+              borderTopColor: theme?.layoutBg,
+            },
+            tabBarInactiveTintColor: theme.color,
+            tabBarActiveTintColor: theme.primary,
+            headerStyle: {backgroundColor: theme.cardBg, height: 50},
+            headerTitleAlign: 'center',
+            headerTitleStyle: {
+              color: theme.primary,
+              fontSize: 18,
+              fontWeight: 'bold',
+            },
+            tabBarShowLabel: false,
+          }}>
+          <Tab.Screen
+            name="To Do"
+            component={Tasks}
+            options={{
+              tabBarIcon: homeIcon,
+            }}
+          />
+          <Tab.Screen
+            name="NetworkExample"
+            component={NetworkExample}
+            options={{
+              tabBarIcon: networkIcon,
+            }}
+          />
+          <Tab.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              // headerShown: false,
+              tabBarIcon: settingsIcon,
+            }}
+          />
+        </Tab.Navigator>
+      ) : (
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
           }}>
           <Stack.Screen name="Login" component={Login} />
         </Stack.Navigator>
-        )} */}
+      )}
     </NavigationContainer>
   );
 }

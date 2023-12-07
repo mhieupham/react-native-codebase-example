@@ -1,12 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, Button, Image, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 import Layout from '../../components/Layout';
-import Card from '../../components/Card';
-import {Input} from '../../components/Form';
-const AppIcon = require('../../assets/images//appicon.png');
+// const AppIcon = require('../../assets/images//appicon.png');
 
 import {useDispatch} from 'react-redux';
 import {updateUser} from '../../store/userSlice';
@@ -14,6 +19,7 @@ import {updateUser} from '../../store/userSlice';
 import {login} from '../../services';
 import {setSecureValue} from '../../utils/keyChain';
 import {transformToFormikErrors} from '../../utils/form';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
 interface ValuesType {
   username: string;
@@ -55,7 +61,8 @@ const Login = () => {
     <Layout>
       <ScrollView contentContainerStyle={styles.scrollview}>
         <View style={styles.container}>
-          <Card style={styles.formWrapper}>
+          <Text style={styles.loginTitle}>Đăng nhập</Text>
+          <View style={styles.formWrapper}>
             <Formik
               initialValues={initialValues}
               validationSchema={LoginSchema}
@@ -67,42 +74,70 @@ const Login = () => {
                 values,
                 errors,
                 touched,
-              }) => (
-                <>
-                  <View style={styles.iconWrapper}>
-                    <Image source={AppIcon} style={styles.appIcon} />
-                  </View>
-                  <Input
-                    testID="Login.Username"
-                    placeholder="Username/Email"
-                    onChangeText={handleChange('username')}
-                    onBlur={handleBlur('username')}
-                    value={values.username}
-                    keyboardType="email-address"
-                    error={
-                      errors.username && touched.username ? errors.username : ''
-                    }
-                  />
-                  <Input
-                    testID="Login.Password"
-                    placeholder="Password"
-                    onChangeText={handleChange('password')}
-                    onBlur={handleBlur('password')}
-                    value={values.password}
-                    secureTextEntry
-                    error={
-                      errors.password && touched.password ? errors.password : ''
-                    }
-                  />
-                  <Button
-                    title="Login"
-                    onPress={handleSubmit}
-                    testID="Login.Button"
-                  />
-                </>
-              )}
+              }) => {
+                const isErrorName =
+                  errors.username && touched.username ? errors.username : '';
+                const isErrorPassword =
+                  errors.password && touched.password ? errors.password : '';
+                return (
+                  <>
+                    <TextInput
+                      placeholder="Nhập mã định danh"
+                      style={styles.loginInputText}
+                      textAlign="center"
+                      onChangeText={handleChange('username')}
+                      onBlur={handleBlur('username')}
+                      value={values.username}
+                    />
+                    <View style={styles.errorMessageBox}>
+                      {isErrorName ? (
+                        <Text style={[styles.loginInputTextMessageError]}>
+                          {errors.username}
+                        </Text>
+                      ) : null}
+                    </View>
+                    <TextInput
+                      placeholder="Nhập mật khẩu"
+                      style={[styles.loginInputText]}
+                      textAlign="center"
+                      onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
+                      value={values.password}
+                      secureTextEntry={true}
+                    />
+                    {isErrorPassword ? (
+                      <Text style={[styles.loginInputTextMessageError]}>
+                        {errors.password}
+                      </Text>
+                    ) : null}
+                    <View style={styles.rememberForgotPasswordBox}>
+                      <View>
+                        <BouncyCheckbox
+                          size={16}
+                          fillColor="#ccc"
+                          innerIconStyle={
+                            styles.checkboxRememberPasswordInnerIcon
+                          }
+                          text="Ghi nhớ mật khẩu"
+                          textStyle={styles.checkboxRememberPasswordText}
+                        />
+                      </View>
+                      <TouchableOpacity>
+                        <Text style={styles.textForgotPassword}>
+                          Quên mật khẩu ?
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.buttonLogin}
+                      onPress={handleSubmit}>
+                      <Text>Đăng nhập</Text>
+                    </TouchableOpacity>
+                  </>
+                );
+              }}
             </Formik>
-          </Card>
+          </View>
         </View>
       </ScrollView>
     </Layout>
@@ -122,6 +157,7 @@ const styles = StyleSheet.create({
   },
   formWrapper: {
     width: '90%',
+    height: 346,
   },
   iconWrapper: {
     alignItems: 'center',
@@ -130,5 +166,53 @@ const styles = StyleSheet.create({
   appIcon: {
     width: 50,
     height: 50,
+  },
+  loginTitle: {
+    fontSize: 20,
+    fontWeight: '300',
+    marginBottom: 51,
+  },
+  loginInputText: {
+    borderColor: '#000000',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    height: 75,
+  },
+  loginInputTextMessageError: {
+    color: 'red',
+    marginLeft: 20,
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  errorMessageBox: {
+    height: 25,
+  },
+  rememberForgotPasswordBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 25,
+  },
+  checkboxRememberPasswordText: {
+    fontSize: 12,
+    color: '#000',
+    textDecorationLine: 'none',
+  },
+  checkboxRememberPasswordInnerIcon: {
+    borderRadius: 5,
+  },
+  textForgotPassword: {
+    color: '#66A3FF',
+  },
+  buttonLogin: {
+    color: '#fff',
+    backgroundColor: '#F6973F',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    borderRadius: 20,
+    marginTop: 19,
   },
 });
