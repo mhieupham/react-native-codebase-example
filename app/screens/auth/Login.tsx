@@ -123,9 +123,7 @@ const Login = () => {
                         />
                       </View>
                       <TouchableOpacity>
-                        <Text style={styles.textForgotPassword}>
-                          Quên mật khẩu ?
-                        </Text>
+                        <Text style={styles.textLink}>Quên mật khẩu ?</Text>
                       </TouchableOpacity>
                     </View>
                     <TouchableOpacity
@@ -133,11 +131,22 @@ const Login = () => {
                       onPress={handleSubmit}>
                       <Text>Đăng nhập</Text>
                     </TouchableOpacity>
+                    <View style={styles.rememberForgotPasswordBox}>
+                      <Text style={styles.textLink}>
+                        Bạn chưa có tài khoản ?
+                      </Text>
+                      <TouchableOpacity>
+                        <Text style={styles.textLink}>Đăng ký</Text>
+                      </TouchableOpacity>
+                    </View>
                   </>
                 );
               }}
             </Formik>
           </View>
+        </View>
+        <View style={styles.textVersion}>
+          <Text style={styles.textLink}>ver 1.0.0</Text>
         </View>
       </ScrollView>
     </Layout>
@@ -202,7 +211,7 @@ const styles = StyleSheet.create({
   checkboxRememberPasswordInnerIcon: {
     borderRadius: 5,
   },
-  textForgotPassword: {
+  textLink: {
     color: '#66A3FF',
   },
   buttonLogin: {
@@ -214,5 +223,10 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 20,
     marginTop: 19,
+  },
+  textVersion: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
