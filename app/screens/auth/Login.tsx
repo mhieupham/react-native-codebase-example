@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-
+import {useTranslation} from 'react-i18next';
 import Layout from '../../components/Layout';
 // const AppIcon = require('../../assets/images//appicon.png');
 
@@ -20,6 +20,9 @@ import {login} from '../../services';
 import {setSecureValue} from '../../utils/keyChain';
 import {transformToFormikErrors} from '../../utils/form';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faEye} from '@fortawesome/free-solid-svg-icons/faEye';
+import {faEyeSlash} from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 
 interface ValuesType {
   username: string;
@@ -28,13 +31,18 @@ interface ValuesType {
 
 const initialValues: ValuesType = {username: '', password: ''};
 
-const LoginSchema = Yup.object().shape({
-  username: Yup.string().min(5, 'Too Short!').required('Required'),
-  password: Yup.string().min(5, 'Too Short!').required('Required'),
-});
-
 const Login = () => {
   const dispatch = useDispatch();
+  const {t} = useTranslation(['login']);
+
+  const LoginSchema = Yup.object().shape({
+    username: Yup.string()
+      .min(5, 'Too Short!')
+      .required(t('login:pleaseEnterInformation')),
+    password: Yup.string()
+      .min(5, 'Too Short!')
+      .required(t('login:pleaseEnterInformation')),
+  });
 
   const handleLogin = (values: ValuesType, {setErrors}: any) => {
     // Add grant_type value to obj
@@ -57,11 +65,17 @@ const Login = () => {
       });
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <Layout>
       <ScrollView contentContainerStyle={styles.scrollview}>
         <View style={styles.container}>
-          <Text style={styles.loginTitle}>Đăng nhập</Text>
+          <Text style={styles.loginTitle}>{t('login:loginTitle')}</Text>
           <View style={styles.formWrapper}>
             <Formik
               initialValues={initialValues}
@@ -81,14 +95,19 @@ const Login = () => {
                   errors.password && touched.password ? errors.password : '';
                 return (
                   <>
-                    <TextInput
-                      placeholder="Nhập mã định danh"
-                      style={styles.loginInputText}
-                      textAlign="center"
-                      onChangeText={handleChange('username')}
-                      onBlur={handleBlur('username')}
-                      value={values.username}
-                    />
+                    <View
+                      style={[
+                        styles.loginInputText,
+                        styles.loginInputPasswordBox,
+                      ]}>
+                      <TextInput
+                        placeholder="Nhập mã định danh"
+                        onChangeText={handleChange('username')}
+                        onBlur={handleBlur('username')}
+                        value={values.username}
+                        style={styles.loginInputLength}
+                      />
+                    </View>
                     <View style={styles.errorMessageBox}>
                       {isErrorName ? (
                         <Text style={[styles.loginInputTextMessageError]}>
@@ -96,15 +115,29 @@ const Login = () => {
                         </Text>
                       ) : null}
                     </View>
-                    <TextInput
-                      placeholder="Nhập mật khẩu"
-                      style={[styles.loginInputText]}
-                      textAlign="center"
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                      secureTextEntry={true}
-                    />
+                    <View
+                      style={[
+                        styles.loginInputText,
+                        styles.loginInputPasswordBox,
+                      ]}>
+                      <TextInput
+                        placeholder="Nhập mật khẩu"
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                        secureTextEntry={!showPassword}
+                        style={styles.loginInputLength}
+                      />
+                      <TouchableOpacity
+                        style={styles.eyeIcon}
+                        onPress={togglePasswordVisibility}>
+                        {showPassword ? (
+                          <FontAwesomeIcon icon={faEyeSlash} />
+                        ) : (
+                          <FontAwesomeIcon icon={faEye} />
+                        )}
+                      </TouchableOpacity>
+                    </View>
                     {isErrorPassword ? (
                       <Text style={[styles.loginInputTextMessageError]}>
                         {errors.password}
@@ -188,11 +221,23 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     height: 75,
   },
+  loginInputLength: {
+    width: '80%',
+    flex: 1,
+    textAlign: 'center',
+  },
+  loginInputPasswordBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 13,
+  },
   loginInputTextMessageError: {
     color: 'red',
     marginLeft: 20,
-    marginTop: 5,
-    marginBottom: 5,
   },
   errorMessageBox: {
     height: 25,
@@ -228,5 +273,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
   },
 });

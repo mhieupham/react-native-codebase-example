@@ -42,6 +42,8 @@ const settingsIcon = ({color}: {color: ColorValue | number}) => (
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+import '../translations';
+
 export default function RootNavigation() {
   const {theme} = useTheme();
   const dispatch = useDispatch();
