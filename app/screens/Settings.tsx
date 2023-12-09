@@ -12,7 +12,7 @@ import MenuItem from '../components/MenuItem';
 
 const avatar = require('../assets/images/avatar.png');
 
-const Settings = () => {
+const Settings = ({navigation}: any) => {
   const {theme, toggleTheme} = useTheme();
   const dispatch = useDispatch();
 
@@ -22,6 +22,7 @@ const Settings = () => {
     removeSecureValue('refresh_token');
     // Remove access token from redux store
     dispatch(clearUser());
+    navigation.navigate('Login');
   };
 
   return (

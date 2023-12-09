@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -14,10 +14,10 @@ import Layout from '../../components/Layout';
 // const AppIcon = require('../../assets/images//appicon.png');
 
 import {useDispatch} from 'react-redux';
-import {updateUser} from '../../store/userSlice';
+import {updateToken, updateUser} from '../../store/userSlice';
 
 import {login} from '../../services';
-import {setSecureValue} from '../../utils/keyChain';
+import {getSecureValue, setSecureValue} from '../../utils/keyChain';
 import {transformToFormikErrors} from '../../utils/form';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -31,9 +31,23 @@ interface ValuesType {
 
 const initialValues: ValuesType = {username: '', password: ''};
 
-const Login = () => {
+const Login = ({navigation}: any) => {
   const dispatch = useDispatch();
   const {t} = useTranslation(['login']);
+
+  useEffect(() => {
+    async function checkIsLogined() {
+      try {
+        let temp = await getSecureValue('token');
+        console.log('temp', temp);
+        if (temp) {
+          navigation.navigate('Home');
+        }
+        dispatch(updateToken({token: temp}));
+      } catch (e) {}
+    }
+    checkIsLogined();
+  }, [dispatch, navigation]);
 
   const LoginSchema = Yup.object().shape({
     username: Yup.string()
@@ -48,13 +62,18 @@ const Login = () => {
     // Add grant_type value to obj
     let reqObj: any = Object.assign({}, values, {grant_type: 'password'});
     // Service request
-    login(new URLSearchParams(reqObj))
+    reqObj.email = reqObj.username;
+    login(reqObj)
       .then(res => {
-        if (res.data?.user?.access_token) {
-          const {name, username, access_token, refresh_token} = res.data.user;
+        if (res.data?.token) {
+          const {user, token, refreshToken} = res.data;
+          const username = user.firstName + user.lastName;
+          const name = user.firstName + user.lastName;
+          const access_token = token;
           dispatch(updateUser({name, username, token: access_token}));
           setSecureValue('token', access_token);
-          setSecureValue('refresh_token', refresh_token);
+          setSecureValue('refresh_token', refreshToken);
+          navigation.navigate('Home');
         }
       })
       .catch(e => {

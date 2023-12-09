@@ -60,9 +60,54 @@ export default function RootNavigation() {
     checkIsLogined();
   }, [dispatch]);
 
+  const Home = () => {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor: theme.cardBg,
+            borderTopColor: theme?.layoutBg,
+          },
+          tabBarInactiveTintColor: theme.color,
+          tabBarActiveTintColor: theme.primary,
+          headerStyle: {backgroundColor: theme.cardBg, height: 50},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            color: theme.primary,
+            fontSize: 18,
+            fontWeight: 'bold',
+          },
+          tabBarShowLabel: false,
+        }}>
+        <Tab.Screen
+          name="To Do"
+          component={Tasks}
+          options={{
+            tabBarIcon: homeIcon,
+          }}
+        />
+        <Tab.Screen
+          name="NetworkExample"
+          component={NetworkExample}
+          options={{
+            tabBarIcon: networkIcon,
+          }}
+        />
+        <Tab.Screen
+          name="Settings"
+          component={Settings}
+          options={{
+            // headerShown: false,
+            tabBarIcon: settingsIcon,
+          }}
+        />
+      </Tab.Navigator>
+    );
+  };
+
   return (
     <NavigationContainer>
-      {user.token ? (
+      {/* {user.token ? (
         <Tab.Navigator
           screenOptions={{
             tabBarStyle: {
@@ -109,8 +154,19 @@ export default function RootNavigation() {
             headerShown: false,
           }}>
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="Todo" component={Tasks} />
         </Stack.Navigator>
-      )}
+      )} */}
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName={user.token ? 'Home' : 'Login'}>
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Login" component={Login} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

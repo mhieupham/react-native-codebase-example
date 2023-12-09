@@ -1,6 +1,6 @@
 import {AxiosRequestHeaders} from 'axios';
 import apiClient from './api-client';
-const BASE_URL = 'http://10.0.2.2:4001';
+const BASE_URL = 'http://localhost:3000';
 
 const contentTypes: any = {
   json: 'application/json',
@@ -33,8 +33,11 @@ const post = async (
 };
 
 // Routes
+
+const prefixApi = 'api';
+
 const routes = {
-  login: 'login',
+  login: `${prefixApi}/v1/auth/email/login`,
   getNews: 'news',
 };
 
